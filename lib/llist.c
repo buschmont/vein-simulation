@@ -2,12 +2,13 @@
 #include <stdlib.h>
 #include "llist.h"
 
-void Npush(Nlist *nl, Node *node)
+void Nappend(Nlist *nl, Node *node)
 {
-	if(nl == NULL)
+	if(nl->node == NULL)
 	{
 		nl->node = node;
 		nl->next = NULL;
+		return;
 	}
 	while(nl->next != NULL)
 	{
@@ -23,6 +24,12 @@ int Nremove(Nlist *nl, int index)
 {
 	if(index < 0 || index > Nlength(nl) - 1) return -1;
 	Nlist *next_ptr;
+	if(nl->next == NULL)
+	{
+		free(nl->node);
+		nl->node = NULL;
+		return 0;
+	}
 	if(index == 0)
 	{
 		next_ptr = nl->next;
@@ -43,7 +50,7 @@ int Nremove(Nlist *nl, int index)
 
 int Nlength(Nlist *nl)
 {
-	if(nl == NULL) return 0;
+	if(nl == NULL || nl->node == NULL) return 0;
 	int i = 1;
 	while(nl->next != NULL)
 	{
@@ -65,20 +72,28 @@ Node* Nget(Nlist *nl, int index)
 
 void Nfree(Nlist *nl)
 {
+	bool first_it = true;
 	while(nl->next != NULL)
 	{
+		nl->node->x = 0;
+		nl->node->y = 0;
 		free(nl->node);
 		Nlist *prev_ptr = nl;
 		nl = nl->next;
-		free(prev_ptr);
+		if(first_it) first_it = false;
+		else free(prev_ptr);
 	}
 	free(nl->node);
-	free(nl);
 }
 
 void Nprint(Nlist *nl, char *name)
 {
 	printf("%s -> ", name);
+	if(nl->node == NULL) 
+	{
+		printf("\n");
+		return;
+	}
 	while(nl->next != NULL)
 	{
 		printf("x:%d,y:%d -> ", nl->node->x, nl->node->y);

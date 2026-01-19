@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdbool.h>
+
 typedef struct Node
 {
 	int x;
@@ -12,7 +14,7 @@ typedef struct Nlist
 	struct Nlist *next;
 } Nlist;
 	
-void Npush(Nlist *nl, Node *node);
+void Nappend(Nlist *nl, Node *node);
 
 int Nremove(Nlist *nl, int index);
 
