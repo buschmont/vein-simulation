@@ -8,8 +8,6 @@
 #include "raylib.h"
 #include "lib/llist.h"
 
-#define PI 3.14159265358979323846
-
 #define SCREEN_WIDTH 1200
 #define SCREEN_HEIGHT 1000
 #define FPS 30
@@ -20,7 +18,7 @@
 #define SOURCE_COLOR RED
 
 void generate_sources_rectangular(Nlist *sl_head, int nr_sources, int radius, int width, int height);
-void generate_sources_circular(Nlist *sl_head, int nr_sources, int source_radius, int circle_radius);
+void generate_sources_circular(Nlist *sl_head, int nr_sources, int circle_radius);
 
 void extinction(Nlist *cl, Nlist *sl, int radius);
 void generate_cells(Nlist *cl, Nlist **deltas, int radius);
@@ -61,7 +59,7 @@ int main()
 	sl_head->next = NULL;
 	Nlist **deltas = NULL;
 
-	bool first_cycle = false;
+	//bool first_cycle = false;
 
 	//_LOOP
 	while(!WindowShouldClose())
@@ -76,7 +74,7 @@ int main()
 			if (radius < 400) radius +=1;
 
 			//generate_sources_rectangular(sl_head, nr_sources, NODE_RADIUS, leaf_width, leaf_height);
-			generate_sources_circular(sl_head, nr_sources, NODE_RADIUS, radius);
+			generate_sources_circular(sl_head, nr_sources, radius);
 
 			extinction(cl_head, sl_head, EXTINCTION_RADIUS);
 			deltas = get_deltas(cl_head, sl_head);
@@ -121,14 +119,14 @@ void generate_sources_rectangular(Nlist *sl_head, int nr_sources, int radius, in
 	}
 }
 
-void generate_sources_circular(Nlist *sl_head, int nr_sources, int source_radius, int circle_radius)
+void generate_sources_circular(Nlist *sl_head, int nr_sources, int circle_radius)
 {
 	if(nr_sources == 0) return;
 	for(int i = 0; i < nr_sources; i++)
 	{
 		Node *source = malloc(sizeof(Node));
 		int r = rand() % circle_radius;
-		int phi= rand() % 360; //angle in degrees
+		int phi = rand() % 360; //angle in degrees
 		source->x = r * cos(phi * PI / 180) + SCREEN_WIDTH/2;
 		source->y = r * sin(phi * PI / 180) + SCREEN_HEIGHT/2;
 		Nappend(sl_head, source);
