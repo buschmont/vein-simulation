@@ -31,12 +31,14 @@ void draw_nodes(Nlist *nl_iterator, int radius, Color color);
 double l2norm(double x, double y);
 double node_l2norm(Node *node);
 
+void ScreenshotTimeStamped(void);
+
 int main()
 {
 	srand(time(NULL));
 
-	int leaf_width = 40;
-	int leaf_height = 40;
+	//int leaf_width = 40;
+	//int leaf_height = 40;
 	int radius = 20;
 
 	InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "simulation");
@@ -52,7 +54,7 @@ int main()
 	cl_head->next = NULL;
 
 	//define nr_sources
-	int nr_sources = 4;	
+	const int nr_sources = 4;	
 
 	Nlist *sl_head = malloc(sizeof(Nlist));
 	sl_head->node = NULL;
@@ -61,12 +63,13 @@ int main()
 
 	bool first_cycle = false;
 
+	//_LOOP
 	while(!WindowShouldClose())
 	{
 		BeginDrawing();
 		ClearBackground(BLACK);
 		
-		//if(IsKeyPressed(KEY_SPACE))
+		if(IsKeyDown(KEY_SPACE))
 		{
 			//leaf_width += 5;
 			//leaf_height += 5;
@@ -79,11 +82,12 @@ int main()
 			deltas = get_deltas(cl_head, sl_head);
 			generate_cells(cl_head, deltas, NODE_RADIUS);
 
-			//Nprint(sl_head, "sl");
 		}
 		draw_nodes(cl_head, NODE_RADIUS, CELL_COLOR);
 		draw_nodes(sl_head, NODE_RADIUS, WHITE);
 		EndDrawing();
+
+		if (IsKeyPressed(KEY_P)) ScreenshotTimeStamped();
 	}
 
 
@@ -234,4 +238,19 @@ double l2norm(double x, double y)
 double node_l2norm(Node *node)
 {
 	return l2norm((double) node->x, (double) node->y);
+}
+
+void ScreenshotTimeStamped(void)
+{
+	if (!DirectoryExists("screenshots")) MakeDirectory("screenshots");
+	time_t now = time(NULL);
+	struct tm *t = localtime(&now);
+	char filename[256];
+	strftime(
+		filename,
+        	sizeof(filename),
+        	"./screenshots/screenshot_%Y%m%d_%H%M%S.png",
+        	t
+    	);
+    	TakeScreenshot(filename);
 }
